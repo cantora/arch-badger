@@ -6,7 +6,14 @@ all: image
 
 .PHONY: image
 image: setup.tar.gz Dockerfile
-	docker build --rm -t 'arch-badger' .
+	docker build --no-cache --rm -t 'arch-badger' .
+
+Dockerfile: Dockerfile.in
+	cryptpass=$$(shadowpass 6) && \
+	test -n "$$cryptpass" && \
+	cog.py -ed \
+		-D cryptpass="$$cryptpass" \
+		-o $@ $<
 
 setup.tar.gz: $(SETUP_FILES) verify_keyring
 	cd setup && tar -cvzf ../setup.tar.gz *
@@ -17,4 +24,4 @@ verify_keyring: $(KEYRING_FILES)
 
 .PHONY: clean
 clean:
-	rm -f setup.tar.gz
+	rm -f setup.tar.gz Dockerfile
