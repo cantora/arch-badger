@@ -1,18 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
 docker run -i -t \
            --rm \
            -u qwer \
            -w /home/qwer \
            -e 'SHELL=/bin/bash' \
+           -e "COLUMNS=$(tput cols)" \
+           -e "LINES=$(tput lines)" \
            --name='badger' \
            --hostname='badger' \
            -p 127.0.0.1:38587:38587 \
            $* \
            arch-badger \
            socat \
-             tcp-listen:38587 exec:'/bin/screen -h 999999 -fn -e ^@2 /bin/bash',pty,stderr,setsid,sigint,sane &
-sleep 2
-socat file:/dev/tty,raw,echo=0 tcp-connect:localhost:38587
-#           bash -c 'exec >/dev/tty 2>/dev/tty </dev/tty; /bin/screen -h 999999 -fn -e ^@2 /bin/bash'
-#
+             tcp-listen:38587 exec:'/bin/screen -h 999999 -fn -e ^@2 /bin/bash',ctty,pty,stderr,setsid,sigint,sane &
+#          bash -c 'exec >/dev/tty 2>/dev/tty </dev/tty; /bin/screen -h 999999 -fn -e ^@2 /bin/bash'
+
+for i in {1..6}; do
+  echo 'try to connect to container...'
+  socat file:/dev/tty,raw,echo=0 tcp-connect:localhost:38587
+  status=$?
+  echo
+  if [ $status -eq 0 ]; then break; fi
+  sleep 1
+done
