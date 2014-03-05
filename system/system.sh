@@ -13,6 +13,6 @@ printf '\n[blackarch]\nServer = %s/$repo/os/$arch\n' \
        >> /etc/pacman.conf
 
 pacman -Syyu --noconfirm
-ARCH_UTILS="sudo gdb git tree sudo make gcc screen emacs-nox openbsd-netcat php"
+ARCH_UTILS="sudo gdb git tree sudo make gcc screen emacs-nox openbsd-netcat php socat"
 BLACKARCH_UTILS="wfuzz sqlmap"
 pacman -S --noconfirm $ARCH_UTILS $BLACKARCH_UTILS

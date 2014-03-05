@@ -1,3 +1,18 @@
 #!/bin/sh
 
-docker run -i -t -u qwer -w /home/qwer -e 'SHELL=/bin/bash' $* arch-badger bash -c 'exec >/dev/tty 2>/dev/tty </dev/tty; /bin/screen -h 999999 -e ^Zz /bin/bash'
+docker run -i -t \
+           --rm \
+           -u qwer \
+           -w /home/qwer \
+           -e 'SHELL=/bin/bash' \
+           --name='badger' \
+           --hostname='badger' \
+           -p 127.0.0.1:38587:38587 \
+           $* \
+           arch-badger \
+           socat \
+             tcp-listen:38587 exec:'/bin/screen -h 999999 -fn -e ^@2 /bin/bash',pty,stderr,setsid,sigint,sane &
+sleep 2
+socat file:/dev/tty,raw,echo=0 tcp-connect:localhost:38587
+#           bash -c 'exec >/dev/tty 2>/dev/tty </dev/tty; /bin/screen -h 999999 -fn -e ^@2 /bin/bash'
+#
