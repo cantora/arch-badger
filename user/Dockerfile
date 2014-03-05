@@ -1,5 +1,5 @@
-RUN mkdir /root/docker-build/user/
-ADD ./user/user.sh /root/docker-build/user/user.sh
+USER qwer
 ENV HOME /home/qwer
 ENV SHELL /bin/bash
-RUN bash /root/docker-build/user/user.sh
+ADD ./user/user.sh /home/qwer/user.sh
+RUN bash /home/qwer/user.sh && rm /home/qwer/user.sh

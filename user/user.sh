@@ -2,7 +2,6 @@
 
 set -e
 
-su qwer
 HOME=/home/qwer
 cd $HOME
 mkdir install
