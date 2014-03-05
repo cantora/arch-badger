@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker run -i -t -u qwer -w /home/qwer -e 'SHELL=/bin/bash' $* arch-badger bash -c 'exec >/dev/tty 2>/dev/tty </dev/tty; /bin/screen -h 999999 -e ^Zz /bin/bash'

@@ -1,1 +1,4 @@
 setup.tar.gz
+.image
+.verify_keyring
+setup/pass.txt
