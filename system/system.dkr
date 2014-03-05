@@ -1,0 +1,4 @@
+RUN mkdir /root/docker-build/system
+ADD ./system/keyring.tar.gz /root/docker-build/system/
+ADD ./system/system.sh /root/docker-build/system/
+RUN bash /root/docker-build/system/system.sh

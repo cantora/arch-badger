@@ -1,28 +1,32 @@
-SETUP_FILES        = $(wildcard setup/*)
-KEYRING_FILES      = $(wildcard setup/blackarch-keyring.pkg.tar.xz*)
-
 .PHONY: all
 all: image
 
 .PHONY: image
-image: setup.tar.gz Dockerfile
-	if [ -f .image ]; then \
-		docker build -t 'arch-badger' .; \
+image: Dockerfile
+	@if [ -f .image ]; then \
+		echo 'build arch-badger' \
+		  && docker build -t 'arch-badger' .; \
 	else \
-		docker build --no-cache -t 'arch-badger' .; \
+		echo 're-build arch-badger' \
+		  && docker build --no-cache -t 'arch-badger' .; \
 	fi
 	touch .image
 
-setup/pass.txt:
-	shadowpass 6 > $@
+Dockerfile: system/Dockerfile config/Dockerfile user/Dockerfile
+	echo 'FROM cantora/arch' >> .dockerfile
+	echo 'RUN mkdir /root/docker-build/' >> .dockerfile
+	cat .dockerfile $+ > $@ && rm -f .dockerfile
 
-setup.tar.gz: setup/pass.txt $(SETUP_FILES) .verify_keyring
-	cd setup && tar -cvzf ../setup.tar.gz *
+system/Dockerfile:
+	$(MAKE) -C system $(MFLAGS)
 
-.verify_keyring: $(KEYRING_FILES)
-	cd setup && gpg --verify blackarch-keyring.pkg.tar.xz.sig
-	touch $@
+config/Dockerfile: system/Dockerfile
+	$(MAKE) -C config $(MFLAGS)
+
+user/Dockerfile: config/Dockerfile
 
 .PHONY: clean
 clean:
-	rm -f setup.tar.gz .image .verify_keyring setup/pass.txt
+	$(MAKE) -C system $(MFLAGS) clean
+	$(MAKE) -C config $(MFLAGS) clean
+	rm -f .image Dockerfile .dockerfile

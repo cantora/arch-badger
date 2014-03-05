@@ -1,0 +1,4 @@
+RUN mkdir /root/docker-build/config
+ADD ./config/pass.txt /root/docker-build/config/pass.txt
+ADD ./config/config.sh /root/docker-build/config/config.sh
+RUN bash /root/docker-build/config/config.sh
