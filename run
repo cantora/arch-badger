@@ -1,5 +1,12 @@
 #!/bin/bash
 
+err_exit () {
+  echo "error: $1"
+  exit 1
+}
+
+docker info >/dev/null 2>&1 || err_exit 'docker not running'
+
 docker run -i -t \
            --rm \
            -u qwer \
@@ -7,7 +14,6 @@ docker run -i -t \
            -e 'SHELL=/bin/bash' \
            -e "COLUMNS=$(tput cols)" \
            -e "LINES=$(tput lines)" \
-           --name='badger' \
            --hostname='badger' \
            -p 127.0.0.1:38587:38587 \
            $* \
